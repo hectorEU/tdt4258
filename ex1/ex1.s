@@ -83,57 +83,87 @@
         .thumb_func
 _reset:
 
+bl cmu_clk_enable
+bl setup_leds
+bl setup_input
+// bl setup_interrupts
 
+//mov r1, 0x01 ; just for testing purpose
 
-	//load CMU base address
-	ldr r1, cmu_base_addr
+b loop1
 
-	// load current value of HFPERCLK ENABLE
+loop1:
+	bl read_button_status
+	bl update_leds
+	
+	//energy optimization (sleep, etc)
+	//mov r8, #6
+	//ldr r2, =SCR
+	//str r8, [r2]
+	//wfi
+	
+	b loop1  // do nothing
+
+	
+	b .
+	
+update_leds:
+	ldr r1, =GPIO_PA_BASE
+	lsl r4, r4, #8
+	str r4, [r1, #GPIO_DOUT]	
+	bx lr
+	
+cmu_clk_enable:
+	ldr r1, =CMU_BASE
 	ldr r2, [r1, #CMU_HFPERCLKEN0]
-	// set bit for GPIO clk.
-	mov r3, #1			 
+	mov r3, #1
 	lsl r3, r3, #CMU_HFPERCLKEN0_GPIO
 	orr r2, r2, r3
-	// store new value
-	str r2, [r1, #CMU_HFPERCLKEN0]
+	str r2, [r1, #CMU_HFPERCLKEN0] 
+	bx lr
 	
-	//setup pin 8-15 for output (LED)
-	// set high drive strength
-	ldr r1, gpio_pa_base_addr
+setup_leds:
+	ldr r1, =GPIO_PA_BASE
 	mov r2, 0x2
-	str r2, [r1, GPIO_CTRL]
+	str r2, [r1, #GPIO_CTRL]	
+	ldr r4, =0x55555555
+	str r4, [r1, #GPIO_MODEH]	
+// set all leds high	
+	ldr  r4, =0b1010101000000000
+	str r4, [r1, #GPIO_DOUT]
+	bx lr
 	
-	//set pins to output
-	mov r4, 0x55555555
-	str r4, [r1, GPIO_MODEH]
+setup_input:
+	ldr r6, =GPIO_PC_BASE
+	ldr r5, =0x33333333
+	str r5, [r6, #GPIO_MODEL]
+	ldr r7, =0xff
+	str r7, [r6, #GPIO_DOUT]
+	bx lr
 	
-	// set all leds high (leds are active high)
-	mov  r4, 0b1010101000000000
-	str r4, [r1, GPIO_DOUT]
+setup_interrupts:
+	ldr r2, =GPIO_BASE
+	ldr r3, =0x22222222
+	str r3, [r2, #GPIO_EXTIPSELL]
+	mov r8, 0xff
+	str r8, [r2, #GPIO_EXTIFALL]
+	str r8, [r2, #GPIO_EXTIRISE]
+	str r8, [r2, #GPIO_IEN]
+	ldr r9, =ISER0
+	movw r8, #0x802
+	str r8, [r9]		
+	bx lr
 	
-	// enable input port
-	ldr r6, gpio_pc_base_addr
-	
-	mov r5, 0x33333333
-	str r5, [r6, GPIO_MODEL]
-	mov r7, 0xff
-	str r7, [r6, GPIO_DOUT]
-	
-	// respond to input
-	mov  r4, 0b1111111000000000
-loop1:
+read_button_status:
+	ldr r6, =GPIO_PC_BASE	
 	ldr r4, [r6, GPIO_DIN]
-	lsl r4, r4, #8
-	str r4, [r1, GPIO_DOUT]
-	
-	      b loop1  // do nothing
-	      
-cmu_base_addr:
-	.long CMU_BASE
-gpio_pa_base_addr:
-	.long GPIO_PA_BASE
-gpio_pc_base_addr:
-	.long GPIO_PC_BASE
+	bx lr   
+
+reset_interrupt:
+	ldr r2, =GPIO_BASE
+	ldr r3, [r2, #GPIO_IF]
+	str r3, [r2, #GPIO_IFC]
+	bx lr
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
@@ -144,10 +174,13 @@ gpio_pc_base_addr:
 	
         .thumb_func
 gpio_handler:  
-
-	mov  r4, 0b1111111000000000
-	str r4, [r1, GPIO_DOUT]
-
+		//add r1,#1
+		
+	//	bl read_button_status
+	//	bl update_leds
+	//	bl reset_interrupt
+		b loop1
+	//	bx lr
 	      b .  // do nothing
 	
 	/////////////////////////////////////////////////////////////////////////////
