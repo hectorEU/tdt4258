@@ -179,8 +179,8 @@ gpio_handler:
 		bl read_button_status
 		bl update_leds
 		bl reset_interrupt
-	//	b loop1
-		bx lr
+		b loop1
+	//	bx lr WILL NOT WORK BECAUSE WE ALLREADY DID BL. (LR GETS OVERWRITTEN)
 
 	
 	/////////////////////////////////////////////////////////////////////////////
