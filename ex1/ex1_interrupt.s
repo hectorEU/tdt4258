@@ -176,11 +176,25 @@ reset_interrupt:
 gpio_handler:  
 		//add r1,#1
 		
-		bl read_button_status
-		bl update_leds
-		bl reset_interrupt
-		b loop1
-	//	bx lr WILL NOT WORK BECAUSE WE ALLREADY DID BL. (LR GETS OVERWRITTEN)
+	//	bl read_button_status
+		ldr r6, =GPIO_PC_BASE	
+		ldr r4, [r6, GPIO_DIN]
+ 
+	//	bl update_leds
+		ldr r1, =GPIO_PA_BASE
+		lsl r4, r4, #8
+		str r4, [r1, #GPIO_DOUT]	
+
+	//	bl reset_interrupt
+		ldr r2, =GPIO_BASE
+		ldr r3, [r2, #GPIO_IF]
+		str r3, [r2, #GPIO_IFC]
+		
+	//	b loop1
+	
+
+
+		bx lr
 
 	
 	/////////////////////////////////////////////////////////////////////////////
