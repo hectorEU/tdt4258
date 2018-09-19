@@ -82,31 +82,20 @@
 	      .type   _reset, %function
         .thumb_func
 _reset:
-
-bl cmu_clk_enable
-bl setup_leds
-bl setup_input
-bl setup_interrupts
-
-//mov r1, 0x01 ; just for testing purpose
-
-b loop1
+	bl cmu_clk_enable
+	bl setup_leds
+	bl setup_input
+	bl setup_interrupts
+	b loop1
 
 loop1:
-	//bl read_button_status
-	//bl update_leds
-	
 	//energy optimization (sleep, etc)
 	mov r8, #6
 	ldr r2, =SCR
 	str r8, [r2]
 	wfi
-	
 	b loop1
 
-	
-	b .
-	
 update_leds:
 	ldr r1, =GPIO_PA_BASE
 	lsl r4, r4, #8
@@ -128,7 +117,7 @@ setup_leds:
 	str r2, [r1, #GPIO_CTRL]	
 	ldr r4, =0x55555555
 	str r4, [r1, #GPIO_MODEH]	
-// set all leds high	
+	// set all leds high	
 	ldr  r4, =0b1010101000000000
 	str r4, [r1, #GPIO_DOUT]
 	bx lr
@@ -167,32 +156,36 @@ reset_interrupt:
 	
 	/////////////////////////////////////////////////////////////////////////////
 	//
-  // GPIO handler
-  // The CPU will jump here when there is a GPIO interrupt
+	// GPIO handler
+	// The CPU will jump here when there is a GPIO interrupt
 	//
 	/////////////////////////////////////////////////////////////////////////////
 	
         .thumb_func
 gpio_handler:  
-		//add r1,#1
 		
-	//	bl read_button_status
-		ldr r6, =GPIO_PC_BASE	
-		ldr r4, [r6, GPIO_DIN]
+		push {r14}
+		bl read_button_status
+		pop {r15}	
+	//	ldr r6, =GPIO_PC_BASE	
+	//	ldr r4, [r6, GPIO_DIN]
  
-	//	bl update_leds
-		ldr r1, =GPIO_PA_BASE
-		lsl r4, r4, #8
-		str r4, [r1, #GPIO_DOUT]	
-
-	//	bl reset_interrupt
-		ldr r2, =GPIO_BASE
-		ldr r3, [r2, #GPIO_IF]
-		str r3, [r2, #GPIO_IFC]
-		
-	//	b loop1
+		push {r14}
+		bl update_leds
+		pop {r15}
 	
+	//	ldr r1, =GPIO_PA_BASE
+	//	lsl r4, r4, #8
+	//	str r4, [r1, #GPIO_DOUT]	
 
+		push {r14}
+		bl reset_interrupt
+		pop {r15}
+	
+	//	ldr r2, =GPIO_BASE
+	//	ldr r3, [r2, #GPIO_IF]
+	//	str r3, [r2, #GPIO_IFC]
+		
 
 		bx lr
 
