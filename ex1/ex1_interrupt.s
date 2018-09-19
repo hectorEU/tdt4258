@@ -164,27 +164,27 @@ reset_interrupt:
         .thumb_func
 gpio_handler:  
 		
-		push {r14}
-		bl read_button_status
-		pop {r15}	
-	//	ldr r6, =GPIO_PC_BASE	
-	//	ldr r4, [r6, GPIO_DIN]
+	//	push {r14}
+	//	bl read_button_status
+	//	pop {r15}	
+		ldr r6, =GPIO_PC_BASE	
+		ldr r4, [r6, GPIO_DIN]
  
-		push {r14}
-		bl update_leds
-		pop {r15}
+	//	push {r14}
+	//	bl update_leds
+	//	pop {r15}
 	
-	//	ldr r1, =GPIO_PA_BASE
-	//	lsl r4, r4, #8
-	//	str r4, [r1, #GPIO_DOUT]	
+		ldr r1, =GPIO_PA_BASE
+		lsl r4, r4, #8
+		str r4, [r1, #GPIO_DOUT]	
 
-		push {r14}
-		bl reset_interrupt
-		pop {r15}
+	//	push {r14}
+	//	bl reset_interrupt
+	//	pop {r15}
 	
-	//	ldr r2, =GPIO_BASE
-	//	ldr r3, [r2, #GPIO_IF]
-	//	str r3, [r2, #GPIO_IFC]
+		ldr r2, =GPIO_BASE
+		ldr r3, [r2, #GPIO_IF]
+		str r3, [r2, #GPIO_IFC]
 		
 
 		bx lr
@@ -195,4 +195,3 @@ gpio_handler:
         .thumb_func
 dummy_handler:  
         b .  // do nothing
-
