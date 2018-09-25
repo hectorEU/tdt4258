@@ -6,6 +6,7 @@
 !*.S
 !*.i
 !README.md
+!Makefile
 
 # ...even if they are in subdirectories
 !*/
