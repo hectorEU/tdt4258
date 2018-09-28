@@ -3,8 +3,6 @@
 //
 // Various useful I/O addresses and definitions for EFM32GG
 //
-// TODO: Add more registers
-//
 /////////////////////////////////////////////////////////////////////////////
 */
 
@@ -44,11 +42,21 @@ GPIO_IFC       = 0x1c
 @ CMU
 
 CMU_BASE = 0x400c8000
-
+@ register offsets from base address
 CMU_HFPERCLKDIV = 0x008
 CMU_HFPERCLKEN0 = 0x044
+CMU_LFCLKSEL = 0x028
 
+@bit-shift left to target bit 13
 CMU_HFPERCLKEN0_GPIO = 1 << 13
+
+@//////////////////////////////////////////////////////////////////////
+@ EMU
+
+EMU_BASE = 0x400c6000
+@ register offsets from base address
+EMU_CTRL = 0x000
+EMU_MEMCTRL = 0x004
 
 @//////////////////////////////////////////////////////////////////////
 @ NVIC
@@ -71,13 +79,6 @@ IPR3 = 0x0c
 
 IRQ_GPIO_EVEN = 1 << 1      @ Table 4.1 MCU RM Interrupt Request Lines
 IRQ_GPIO_ODD = 1 << 11
-
-@//////////////////////////////////////////////////////////////////////
-@ EMU
-
-EMU_BASE = 0x400c6000
-
-EMU_CTRL = 0x000
 
 @//////////////////////////////////////////////////////////////////////
 @ System Control Block

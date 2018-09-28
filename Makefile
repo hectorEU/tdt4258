@@ -37,4 +37,4 @@ upload :
 
 .PHONY : clean
 clean :
-	-rm -rf *.o *.elf *.bin *.hex
+	-rm -rf *.o *.elf *.bin *.hex ex1_post.s
