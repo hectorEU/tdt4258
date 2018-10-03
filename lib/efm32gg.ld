@@ -157,6 +157,7 @@ SECTIONS
   } >ram AT>rom
   .bss : ALIGN (8)
   {
+    __bss_start__ = .;
     *(.shbss)
     *(.bss .bss.* .gnu.linkonce.b.*)
     *(COMMON)
@@ -165,6 +166,7 @@ SECTIONS
     . = ALIGN (8);
     _end = .;
     __end = .;
+    __bss_end__ = .;
   } >ram
   /* __cs3_region_end_ram is deprecated */
   __cs3_region_end_ram = __cs3_region_start_ram + LENGTH(ram);
