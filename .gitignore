@@ -3,8 +3,10 @@
 
 # But not these files...
 !.gitignore
-!*.S
-!*.i
+!*.h
+!*.c
+!*.ld
+!*.a
 !README.md
 !Makefile
 

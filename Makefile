@@ -1,40 +1,33 @@
 # Example Makefile
 #
-# Exercise 1, TDT4258
+# Exercise 2, TDT4258
 
+CC=arm-none-eabi-gcc
 LD=arm-none-eabi-gcc
-AS=arm-none-eabi-as
 OBJCOPY=arm-none-eabi-objcopy
 
-LDFLAGS=-nostdlib
-ASFLAGS=-mcpu=cortex-m3 -mthumb -g -am
-CFLAGS=
+CFLAGS=-mcpu=cortex-m3 -mthumb -g -std=c99 -Wall
+LDFLAGS=-mcpu=cortex-m3 -mthumb -g -lgcc -lc -lcs3 -lcs3unhosted -lefm32gg -Llib
+ASFLAGS=-mcpu=cortex-m3 -mthumb -g
+LINKERSCRIPT=lib/efm32gg.ld
 
-LINKERSCRIPT=efm32gg.ld
+ex2.bin : ex2.elf
+	${OBJCOPY} -O binary $< $@
 
-.PHONY : improved baseline
-# This flag will solve the macro in ex1.S
-improved : CFLAGS=-DIMPROVED
-improved : ex1.bin
-baseline : ex1.bin
+ex2.elf : ex2.o timer.o dac.o gpio.o interrupt_handlers.o
+	${LD} -T ${LINKERSCRIPT} $^ -o $@ ${LDFLAGS} 
 
-# Get raw binary
-ex1.bin : ex1.elf
-	${OBJCOPY} -j .text -O binary $< $@
+%.o : %.c
+	${CC} ${CFLAGS} -c $< -o $@
 
-# Linker stage
-ex1.elf : ex1.o
-	${LD} -T ${LINKERSCRIPT} $^ -o $@ ${LDFLAGS}
-
-# Use preprocessor and compile
-ex1.o : ex1.S
-	${LD} -E ${CFLAGS} $< -o ex1_post.s
-	${AS} ${ASFLAGS} ex1_post.s -o $@
+.PHONY : pretty
+pretty :
+	-indent *.c *.h
 
 .PHONY : upload
 upload :
-	-eACommander.sh -r --address 0x00000000 -f "ex1.bin" -r
+	-eACommander.sh -r --address 0x00000000 -f "ex2.bin" -r
 
 .PHONY : clean
 clean :
-	-rm -rf *.o *.elf *.bin *.hex ex1_post.s
+	-rm -rf *.o *.elf *.bin *.hex 
