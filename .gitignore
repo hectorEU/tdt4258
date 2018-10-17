@@ -5,6 +5,10 @@
 !.gitignore
 !*.S
 !*.i
+!*.c
+!*.h
+!*.ld
+!*.a
 !README.md
 !Makefile
 
