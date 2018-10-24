@@ -42,14 +42,18 @@ int main(void)
 	setupDAC();
 	setupTimer(SAMPLE_PERIOD);
 	setupNVIC();
-
+	uint8_t c = 200;
 
 	while(1)
 	{
 
-
-		if(*TIMER1_CNT >= SAMPLE_PERIOD-20)
+		*DAC0_CH0DATA = 0xFFF;
+		*DAC0_CH1DATA = 0xFFF;
+		
+		if(*TIMER1_CNT == SAMPLE_PERIOD-20)
 		{
+			
+			c++;
 				if(flag == 1)
 				{
 					// turn on LEDs
