@@ -18,7 +18,7 @@ void setupDAC()
    *CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_DAC0;
    *DAC0_CTRL = 0x50010; // Set frequency = 437,5KHz
    *DAC0_CH0CTRL |= 1;  //enable left channel
-   *DAC0_CH1CTRL |= 1; //enable right channel
+   *DAC0_CH1CTRL |= 1;  //enable right channel
 
 
 }

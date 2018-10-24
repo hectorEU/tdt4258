@@ -14,7 +14,7 @@ void setupTimer(uint16_t period)
 	 * 1. Enable clock to timer by setting bit 6 in CMU_HFPERCLKEN0 */
 
    *CMU_HFPERCLKEN0 |= CMU2_HFPERCLKEN0_TIMER1;
-   *CMU_HFPERCLKDIV |= 0b1001;
+   *TIMER1_CTRL = 0x7 << 24; // prescale timer clock -> new Frequency = 109375 Hz
 
 	 /* 2. Write the period to register TIMER1_TOP */
 
@@ -23,7 +23,7 @@ void setupTimer(uint16_t period)
    /*3. Enable timer interrupt
 	 * generation by writing 1 to TIMER1_IEN */
 
-   /*TIMER1_IEN |= 0x2;
+    //*TIMER1_IEN |= 0x1;
 
    /*4. Start the timer by writing
 	 * 1 to TIMER1_CMD

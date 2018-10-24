@@ -36,12 +36,13 @@
 #define GPIO_PC_DIN      ((volatile uint32_t*)(GPIO_PC_BASE + 0x1c))
 #define GPIO_PC_PINLOCKN ((volatile uint32_t*)(GPIO_PC_BASE + 0x20))
 
-#define GPIO_EXTIPSELL ((volatile uint32_t*)(GPIO_PA_BASE + 0x100))
-#define GPIO_EXTIPSELH ((volatile uint32_t*)(GPIO_PA_BASE + 0x104))
-#define GPIO_EXTIRISE  ((volatile uint32_t*)(GPIO_PA_BASE + 0x108))
-#define GPIO_EXTIFALL  ((volatile uint32_t*)(GPIO_PA_BASE + 0x10c))
-#define GPIO_IEN       ((volatile uint32_t*)(GPIO_PA_BASE + 0x110))
-#define GPIO_IFC       ((volatile uint32_t*)(GPIO_PA_BASE + 0x11c))
+#define GPIO_EXTIPSELL   ((volatile uint32_t*)(GPIO_PA_BASE + 0x100))
+#define GPIO_EXTIPSELH   ((volatile uint32_t*)(GPIO_PA_BASE + 0x104))
+#define GPIO_EXTIRISE    ((volatile uint32_t*)(GPIO_PA_BASE + 0x108))
+#define GPIO_EXTIFALL    ((volatile uint32_t*)(GPIO_PA_BASE + 0x10c))
+#define GPIO_IEN         ((volatile uint32_t*)(GPIO_PA_BASE + 0x110))
+#define GPIO_IF          ((volatile uint32_t*)(GPIO_PA_BASE + 0x114))
+#define GPIO_IFC         ((volatile uint32_t*)(GPIO_PA_BASE + 0x11c))
 
 // CMU
 
@@ -63,11 +64,12 @@
 
 #define TIMER1_BASE 0x40010400
 
-#define TIMER1_CMD ((volatile uint32_t*)(TIMER1_BASE + 0x04))
-#define TIMER1_IEN ((volatile uint32_t*)(TIMER1_BASE + 0x0c))
-#define TIMER1_IFC ((volatile uint32_t*)(TIMER1_BASE + 0x18))
-#define TIMER1_TOP ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
-#define TIMER1_CNT ((volatile uint32_t*)(TIMER1_BASE + 0x24))
+#define TIMER1_CTRL ((volatile uint32_t*)(TIMER1_BASE))
+#define TIMER1_CMD  ((volatile uint32_t*)(TIMER1_BASE + 0x04))
+#define TIMER1_IEN  ((volatile uint32_t*)(TIMER1_BASE + 0x0c))
+#define TIMER1_IFC  ((volatile uint32_t*)(TIMER1_BASE + 0x18))
+#define TIMER1_TOP  ((volatile uint32_t*)(TIMER1_BASE + 0x1c))
+#define TIMER1_CNT  ((volatile uint32_t*)(TIMER1_BASE + 0x24))
 
 // NVIC
 
@@ -140,3 +142,11 @@
 #define SCR          ((volatile uint32_t*)0xe000ed10)
 #define SYSTICK_CTRL ((volatile uint32_t*)0xe000e010)
 #define SYSTICK_LOAD ((volatile uint32_t*)0xe000e014)
+
+
+// Global variable
+extern uint16_t flag;
+extern uint16_t LED_blink_counter;
+extern uint16_t LED_blink_counter2;
+extern uint16_t LED_blink_loop;
+extern void read_buttons(void);

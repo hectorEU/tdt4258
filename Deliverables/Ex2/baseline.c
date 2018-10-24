@@ -14,7 +14,7 @@
 /*
  * The period between sound samples, in clock cycles
  */
-#define   SAMPLE_PERIOD   1
+#define   SAMPLE_PERIOD   54688
 
 /*
  * Declaration of peripheral setup functions
@@ -22,7 +22,14 @@
 void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
-extern void setupGPIO();
+void setupGPIO();
+
+
+uint16_t flag = 0;
+uint16_t LED_blink_counter = 0;
+uint16_t LED_blink_counter2 = 0;
+uint16_t LED_blink_loop = 8;
+
 /*
  * Your code will start executing here
  */
@@ -34,29 +41,31 @@ int main(void)
 	setupGPIO();
 	setupDAC();
 	setupTimer(SAMPLE_PERIOD);
+	setupNVIC();
 
-	uint16_t counter = 0;
 
-	while(*TIMER1_CNT)
+	while(1)
 	{
 
 
-		if(*TIMER1_CNT = 0x0fff)
+		if(*TIMER1_CNT >= SAMPLE_PERIOD-20)
 		{
-			//*GPIO_PA_DOUT = *TIMER1_CNT;
-		*GPIO_PA_DOUT = counter << 8;
-		counter ++;
+				if(flag == 1)
+				{
+					// turn on LEDs
+					*GPIO_PA_DOUT = 0x0000;
+					flag = 0;
+				}
+					// turn off LEDs
+				else
+				{
+					*GPIO_PA_DOUT = 0xff00;
+					flag = 1;
+				}
+		}
 
-		uint8_t x = counter;
+		//read_buttons();
 
-		*DAC0_CH0DATA = x;
-		//if(Counter == 1000)
-		//{
-		//*GPIO_PA_DOUT = ~*GPIO_PA_DOUT;
-		//Counter = 0;
-		//}
-
-	}
 	}
 
 	return 0;
@@ -76,7 +85,12 @@ void setupNVIC()
 	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
 	 * assignment.
 	 */
+
+	 *ISER0 |= 1 << 1;  // Enable interrupt request in NVIC for interrupt line 1 GPIO_EVEN
+	 *ISER0 |= 1 << 11; // Enable interrupt request in NVIC for interrupt line 1 GPIO_ODD
+	 *ISER0 |= 1 << 12; // Enable interrupt request in NVIC for interrupt line 12 TIMER1
 }
+
 
 /*
  * if other interrupt handlers are needed, use the following names:

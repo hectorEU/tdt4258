@@ -12,7 +12,7 @@
 /*
  * The period between sound samples, in clock cycles
  */
-#define   SAMPLE_PERIOD   0
+#define   SAMPLE_PERIOD   317
 
 /*
  * Declaration of peripheral setup functions
@@ -42,15 +42,24 @@ int main(void)
 	 * TODO for higher energy efficiency, sleep while waiting for
 	 * interrupts instead of infinite loop for busy-waiting
 	 */
+	 uint16_t counter = 0;
+	 uint16_t i = 0;
 
-	 uint32_t x = 0;
+	while (1)
+	{
+			*GPIO_PA_DOUT = i << 8; // set next LED high through shifting the variable i
+			i++;
 
-	while (1) ;
+			if(i = 8) // reset i when all LEDs are switched on
+			{
+				i = 0;
+			}
 
-	x = *GPIO_PC_DIN;
-	*GPIO_PA_DOUT = x << 8;
-	for(int i = 0; i < 34767; i++)
-	{}
+			if(counter < SAMPLE_PERIOD/2)
+			{
+				*DAC0_CH0DATA = 0b011111111111; // DAC input 
+			}
+	}
 
 	return 0;
 }
