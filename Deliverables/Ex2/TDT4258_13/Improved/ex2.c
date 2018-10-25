@@ -1,79 +1,55 @@
 #include <stdint.h>
 #include <stdbool.h>
-
+#include <math.h>
 #include "efm32gg.h"
 
 /*
- * TODO calculate the appropriate sample period for the sound wave(s) you
+ * TODO calculate the appropriate sample period for the sound wave(s) you 
  * want to generate. The core clock (which the timer clock is derived
  * from) runs at 14 MHz by default. Also remember that the timer counter
- * registers are 16 bits.
+ * registers are 16 bits. 
  */
 /*
- * The period between sound samples, in clock cycles
+ * The period between sound samples, in clock cycles 
  */
-#define   SAMPLE_PERIOD   317
+#define TIMER_CLK_FREQUENCY 14000000	//counts per sec.
+#define SAMPLE_FREQUENCY 	44100	// samples per sec.
+#define SAMPLE_PERIOD		TIMER_CLK_FREQUENCY/SAMPLE_FREQUENCY	// counts per sample.
 
 /*
- * Declaration of peripheral setup functions
+ * Declaration of peripheral setup functions 
  */
 void setupTimer(uint32_t period);
 void setupDAC();
 void setupNVIC();
+void setupGPIO();
 
-/*
- * Your code will start executing here
- */
 int main(void)
 {
 	/*
-	 * Call the peripheral setup functions
+	 * Call the peripheral setup functions 
 	 */
 	setupGPIO();
 	setupDAC();
 	setupTimer(SAMPLE_PERIOD);
 
-	/*
-	 * Enable interrupt handling
-	 */
-	setupNVIC();
+	setupNVIC();		// Enable interrupt handling 
 
 	/*
 	 * TODO for higher energy efficiency, sleep while waiting for
-	 * interrupts instead of infinite loop for busy-waiting
+	 * interrupts instead of infinite loop for busy-waiting 
 	 */
-	 uint16_t counter = 0;
-	 uint16_t i = 0;
 
-	while (1)
-	{
-			*GPIO_PA_DOUT = i << 8; // set next LED high through shifting the variable i
-			i++;
-
-			if(i = 8) // reset i when all LEDs are switched on
-			{
-				i = 0;
-			}
-
-			if(counter < SAMPLE_PERIOD/2)
-			{
-				*DAC0_CH0DATA = 0b011111111111; // DAC input 
-			}
-	}
-
+	while (1) ;
 	return 0;
 }
 
 void setupNVIC()
 {
-	/*
-	 * TODO use the NVIC ISERx registers to enable handling of
-	 * interrupt(s) remember two things are necessary for interrupt
-	 * handling: - the peripheral must generate an interrupt signal - the
-	 * NVIC must be configured to make the CPU handle the signal You will
-	 * need TIMER1, GPIO odd and GPIO even interrupt handling for this
-	 * assignment.
-	 */
+
+	*ISER0 |= 1 << 1;	// Enable interrupt request in NVIC for interrupt line 1 GPIO_EVEN
+	*ISER0 |= 1 << 11;	// Enable interrupt request in NVIC for interrupt line 1 GPIO_ODD
+	*ISER0 |= 1 << 12;	// Enable interrupt request in NVIC for interrupt line 12 TIMER1
 }
 
 /*
@@ -92,5 +68,5 @@ void setupNVIC()
  * LEUART0_IRQHandler LEUART1_IRQHandler LETIMER0_IRQHandler
  * PCNT0_IRQHandler PCNT1_IRQHandler PCNT2_IRQHandler RTC_IRQHandler
  * BURTC_IRQHandler CMU_IRQHandler VCMP_IRQHandler LCD_IRQHandler
- * MSC_IRQHandler AES_IRQHandler EBI_IRQHandler EMU_IRQHandler
+ * MSC_IRQHandler AES_IRQHandler EBI_IRQHandler EMU_IRQHandler 
  */
